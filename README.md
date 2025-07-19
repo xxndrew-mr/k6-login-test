@@ -119,8 +119,3 @@ thresholds:
 🔗 [linkedin.com/in/andre-marshandito](https://www.linkedin.com/in/andre-marshandito)
 
 ---
-
-## 🏁 Next Step
-
-- Tambahkan test untuk metode HTTP lain seperti `GET`, `PUT`, `DELETE`.
-- Upload ke GitHub untuk memperkuat portofolio QA kamu.
