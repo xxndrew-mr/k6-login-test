@@ -1,57 +1,40 @@
-# 🔥 K6 Load Testing - Login API
+# 🔥 K6 Login Load Testing - Reqres API
 
-Proyek ini digunakan untuk melakukan **performance testing** pada endpoint login menggunakan [k6](https://k6.io/) — tool open-source untuk load testing berbasis JavaScript. Tes dilakukan untuk mengukur kecepatan, reliabilitas, dan ketahanan API login.
+This project demonstrates performance testing using [k6](https://k6.io) for the `POST /api/login` endpoint from [reqres.in](https://reqres.in).
 
----
+## 📌 Scenario
+This script:
+- Sends POST requests with valid login payload
+- Verifies status is `200` and `token` is returned
+- Uses thresholds:
+  - 95% of response times should be < 500ms
+  - Failed request rate should be < 10%
 
-## 📌 Endpoint yang Diuji
-
-- **URL**: `POST https://reqres.in/api/login`  
-- **Payload**:
-  ```json
-  {
-    "email": "eve.holt@reqres.in",
-    "password": "cityslicka"
-  }
-  ```
-
----
-
-## 📁 Struktur Folder
-
+## 📁 Structure
 ```
 k6-login-test/
-├── login-test.js                      # Script utama load testing
+├── login-test.js
 └── test-results/
-    └── hasil-k6-performance-test.png  
+    └── login-test-screenshot.png (optional)
 ```
 
----
+## 🧪 Run the Test
 
-## ⚙️ Cara Menjalankan
+### 1. Install k6  
+Using Chocolatey (Windows):
+```bash
+choco install k6
+```
+Or download manually: https://github.com/grafana/k6/releases
 
-1. **Instalasi K6 via Chocolatey (Windows)**:
-   Buka PowerShell sebagai Administrator dan jalankan:
-   ```powershell
-   Set-ExecutionPolicy Bypass -Scope Process -Force; `
-   [System.Net.ServicePointManager]::SecurityProtocol = `
-   [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; `
-   iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+### 2. Run script
+```bash
+k6 run login-test.js
+```
 
-   choco install k6
-   ```
+## 📄 Script Overview
 
-2. **Jalankan Script**:
-   Masuk ke folder project dan jalankan:
-   ```bash
-   k6 run login-test.js
-   ```
-
----
-
-## ✅ Script: `login-test.js`
-
-```javascript
+```js
 import http from 'k6/http';
 import { check } from 'k6';
 
@@ -59,8 +42,8 @@ export const options = {
   vus: 10,
   duration: '10s',
   thresholds: {
-    http_req_duration: ['p(95)<500'], // 95% request harus <500ms
-    http_req_failed: ['rate<0.1'],    // Gagal <10%
+    http_req_duration: ['p(95)<500'],
+    http_req_failed: ['rate<0.1'],
   },
 };
 
@@ -71,9 +54,13 @@ export default function () {
     password: 'cityslicka',
   });
 
-  const headers = { 'Content-Type': 'application/json' };
+  const params = {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  };
 
-  const res = http.post(url, payload, { headers });
+  const res = http.post(url, payload, params);
 
   check(res, {
     'status is 200': (r) => r.status === 200,
@@ -82,40 +69,21 @@ export default function () {
 }
 ```
 
----
-
-## 📊 Contoh Hasil Tes
+## 🧾 Sample Output
 
 ```
-checks_succeeded...................: 64.10% 100 out of 156
-checks_failed......................: 35.89% 56 out of 156
-
-✗ status is 200
-  ↳  64% — ✓ 50 / ✗ 28
-✗ token exists
-  ↳  64% — ✓ 50 / ✗ 28
-
-thresholds:
-✗ 'http_req_duration: p(95)<500' => 611.75ms
-✗ 'http_req_failed: rate<0.1' => 35.89%
+http_req_duration... ✗ 'p(95)<500' p(95)=611.75ms
+http_req_failed..... ✗ 'rate<0.1' rate=35.89%
+checks_succeeded.... 64.10%
 ```
 
-🖼 Screenshot hasil uji di `test-results/hasil-k6-performance-test.png`
+## 📸 Notes
+Add screenshots of the test output (optional) under `test-results/`.
 
 ---
 
-## 🧠 Insight & Analisis
+## 📬 About
 
-- **Request gagal 35.89%** = server belum stabil untuk 10 user paralel.
-- **p95 latency 611ms** = melebihi batas optimal (500ms).
-- Rekomendasi: optimasi backend dan monitoring beban server.
+Created by [Andre Marshandito](https://www.linkedin.com/in/andre-marshandito/)  
+Feel free to fork or star ⭐ this repo if you found it helpful!
 
----
-
-## 🧑‍💻 Author
-
-**Andre Marshandito**  
-📌 QA Automation & Performance Testing Enthusiast  
-🔗 [linkedin.com/in/andre-marshandito](https://www.linkedin.com/in/andre-marshandito)
-
----
