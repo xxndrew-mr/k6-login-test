@@ -78,7 +78,7 @@ checks_succeeded.... 64.10%
 ```
 
 ## 📸 Notes
-Add screenshots of the test output (optional) under `test-results/`.
+screenshots of the test output under `test-results/`.
 
 ---
 
